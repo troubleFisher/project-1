@@ -2,8 +2,8 @@
   "extends": "eslint-config-egg",
   "rules": {
     "semi": [
-      "error",
-      "never"
+      2,
+      "always"
     ]
   }
 }
