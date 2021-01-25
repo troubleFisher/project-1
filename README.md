@@ -1,7 +1,5 @@
 # server
 
-
-
 ## QuickStart
 
 <!-- add docs here for user -->
@@ -29,5 +27,18 @@ $ npm stop
 - Use `npm test` to run unit test.
 - Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
 
-
 [egg]: https://eggjs.org
+
+### 返回值
+
+{
+  code:0,
+  data:{
+
+  },
+  message:''
+}
+
+code:0    成功 其他都是失败
+     -1   错误
+     -666 登陆状态过期  
