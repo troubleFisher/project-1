@@ -16,10 +16,15 @@ const createRule = {
 class UserController extends baseController {
   async login() {
     const { ctx, app } = this;
-    const { email, password, captcha } = ctx.request.body;
+    const { email, password, captcha, emailCode } = ctx.request.body;
     if (captcha.toUpperCase() !== ctx.session.captcha.toUpperCase()) {
       return this.error('验证码错误');
     }
+
+    if (emailCode !== ctx.session.emailcode) {
+      return this.error('邮箱验证码错误');
+    }
+
     const user = await ctx.model.User.findOne({
       email,
       password: md5(password + HashSalt),
@@ -35,7 +40,7 @@ class UserController extends baseController {
         _id: user._id,
       },
       app.config.jwt.secret,
-      { expiresIn: '1h' }
+      { expiresIn: '15m' }
     );
     this.success({ token, email, username: user.username });
   }
@@ -81,6 +86,11 @@ class UserController extends baseController {
 
   async info() {
     // 获取用户信息
+    // 现在还不知道用户信息，需要从token读数据
+    const { ctx } = this;
+    const { email } = ctx.state;
+    const user = await this.checkEmail(email);
+    this.success(user);
   }
 }
 

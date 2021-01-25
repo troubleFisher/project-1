@@ -1,9 +1,9 @@
 'use strict';
 const svgCaptcha = require('svg-captcha');
 
-const Controller = require('egg').Controller;
+const baseController = require('./base');
 
-class UtilController extends Controller {
+class UtilController extends baseController {
   async captcha() {
     const captcha = svgCaptcha.create({
       size: 4,
@@ -17,6 +17,28 @@ class UtilController extends Controller {
     this.ctx.session.captcha = captcha.text;
     this.ctx.response.type = 'image/svg+xml';
     this.ctx.body = captcha.data;
+  }
+
+  async sendCode() {
+    const { ctx } = this;
+
+    const email = ctx.query.email;
+    const code = Math.random().toString().slice(2, 6);
+
+    ctx.session.emailcode = code;
+    const subject = 'ty的验证码';
+    const text = '啦啦啦';
+    const html = `<h2>来看看ty的github点个赞吧<a href='https://github.com/troubleFisher'><span>${code}</span></a></h2>`;
+    const hasSend = await this.service.tools.sendMail(
+      email,
+      subject,
+      text,
+      html
+    );
+    if (hasSend) {
+      return this.message('发送成功');
+    }
+    this.error('发送失败');
   }
 }
 
