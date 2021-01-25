@@ -79,7 +79,9 @@ class UserController extends baseController {
     // 校验用户名是否存在
   }
 
-  async info() {}
+  async info() {
+    // 获取用户信息
+  }
 }
 
 module.exports = UserController;
