@@ -19,4 +19,5 @@ module.exports = app => {
     router.get('/verify', verify);
   });
   router.get('/sendCode', controller.util.sendCode);
+  router.post('/uploadFile', controller.util.uploadFile);
 };
