@@ -43,10 +43,13 @@ class UtilController extends baseController {
   }
 
   async uploadFile() {
+    // 模拟报错
+    if (Math.random() < 0.5) {
+      return (this.ctx.state = 500);
+    }
     // 存放地址 /public/hash/name
     const { ctx } = this;
     const file = ctx.request.files[0];
-    console.log('file', file);
     const { hash, name } = ctx.request.body;
 
     const chunkPath = path.resolve(this.config.UPLOAD_DIR, hash);
