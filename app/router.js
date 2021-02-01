@@ -20,4 +20,5 @@ module.exports = app => {
   });
   router.get('/sendCode', controller.util.sendCode);
   router.post('/uploadFile', controller.util.uploadFile);
+  router.post('/mergeFile', controller.util.mergeFile);
 };

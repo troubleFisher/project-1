@@ -1,6 +1,7 @@
 'use strict';
 const svgCaptcha = require('svg-captcha');
 const fse = require('fs-extra');
+const path = require('path');
 const baseController = require('./base');
 
 class UtilController extends baseController {
@@ -42,17 +43,31 @@ class UtilController extends baseController {
   }
 
   async uploadFile() {
+    // 存放地址 /public/hash/name
     const { ctx } = this;
-
     const file = ctx.request.files[0];
-    const { name } = ctx.request.body;
+    console.log('file', file);
+    const { hash, name } = ctx.request.body;
 
-    console.log('this.config.UPLOAD_DIR', this.config.UPLOAD_DIR);
+    const chunkPath = path.resolve(this.config.UPLOAD_DIR, hash);
+    // const filePath = path.resolve(chunkPath, name);
+    if (!fse.existsSync(chunkPath)) {
+      await fse.mkdir(chunkPath);
+    }
 
-    await fse.move(file.filepath, this.config.UPLOAD_DIR + '/' + file.filename);
-    this.success({ url: `/public/${file.filename}` });
+    // await fse.move(file.filepath, this.config.UPLOAD_DIR + '/' + file.filename);
+    await fse.move(file.filepath, `${chunkPath}/${name}`);
+    // this.success({ url: `/public/${file.filename}` });
+    this.message('切片上传成功');
+  }
 
-    console.log('ctx.request.files', ctx.request.files, 'name', name);
+  async mergeFile() {
+    const { ext, hash, size } = this.ctx.request.body;
+    const filePath = path.resolve(this.config.UPLOAD_DIR, `${hash}.${ext}`);
+    await this.ctx.service.tools.mergeFile(filePath, hash, size);
+    this.success({
+      url: `/public/${hash}.${ext}`,
+    });
   }
 }
 
