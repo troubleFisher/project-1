@@ -69,6 +69,26 @@ class UtilController extends baseController {
       url: `/public/${hash}.${ext}`,
     });
   }
+
+  async checkFile() {
+    const { hash, ext } = this.ctx.request.body;
+    const filePath = path.resolve(this.config.UPLOAD_DIR, `${hash}.${ext}`);
+    let uploaded = false;
+    let uploadedList = [];
+    if (fse.existsSync(filePath)) {
+      // 文件存在
+      uploaded = true;
+    } else {
+      uploadedList = await this.getUploadedList(
+        path.resolve(this.config.UPLOAD_DIR, hash)
+      );
+    }
+    this.success({ uploaded, uploadedList });
+  }
+
+  async getUploadedList(dirPath) {
+    return fse.existsSync(dirPath) ? fse.readdirSync(dirPath) : [];
+  }
 }
 
 module.exports = UtilController;
